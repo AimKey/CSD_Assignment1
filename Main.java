@@ -69,6 +69,65 @@ class Heap {
     // System.out.printf("Right child:%6s%s\n", " ", planets[rightChild(i)]);
     // }
     // }
+
+    public void heapify() {
+        for (int i = size / 2 - 1; i >= 0; i--) {
+            heapifyDown(i);
+        }
+    }
+
+    public void heapifyDown(int pos) {
+        if (isLeaf(pos)){
+            return;
+        }
+        
+        int left = leftChild(pos);
+        int right = rightChild(pos);
+        int largest = pos;
+
+        if (left < size && planets[left].compareTo(planets[largest]) > 0) {
+            largest = left;
+        }
+
+        if (right < size && planets[right].compareTo(planets[largest]) > 0) {
+            largest = right;
+        }
+
+        if (largest != pos) {
+            swap(pos, largest);
+            heapifyDown(largest);
+        }
+    }
+
+    public void heapSort() {
+        heapify();
+
+        for (int i = size - 1; i > 0; i--) {
+            swap(0, i);
+            size--;
+            heapifyDown(0);
+        }
+    }
+
+    public Planet[] getSortedArray() {
+        Planet[] sortedPlanets = new Planet[maxSize];
+        int index = 0;
+        while (size > 0) {
+            sortedPlanets[index++] = remove();
+        }
+        return sortedPlanets;
+    }
+
+    public Planet remove(){
+        if (size == 0) {
+            return null;
+        }
+
+        Planet removedPlanet = planets[0];
+        planets[0] = planets[--size];
+        heapifyDown(0);
+        return removedPlanet;
+    }
 }
 
 class Planet implements Comparable<Planet> {
