@@ -1,3 +1,4 @@
+import java.util.Arrays;
 
 class Main {
     public static void main(String[] args) {
@@ -11,6 +12,8 @@ class Main {
         planets.insert(new Planet("Uranus", 4.007, 14.54, 19.19, 84.02));
         planets.insert(new Planet("Neptune", 3.883, 17.15, 30.07, 164.79));
         planets.traverse();
+        System.out.println(Arrays.toString(planets.getSortedArray()));
+        
     }
 
 }
@@ -55,14 +58,81 @@ class Heap {
     }
 
     public void traverse() {
-        System.out.println("size: " + size);
-        for (int i = 0; i < planets.length / 2; i++) {
-            System.out.printf("Parrent:%10s%s\n", " ", planets[i]);
-            if (leftChild(i) < size)
-                System.out.printf("Left Child:%7s%s\n", " ", planets[leftChild(i)]);
-            if (rightChild(i) < size)
-                System.out.printf("Right child:%6s%s\n", " ", planets[rightChild(i)]);
+    System.out.println("size: " + size);
+    for (int i = 0; i < planets.length / 2; i++) {
+    System.out.printf("Parrent:%10s%s\n", " ", planets[i]);
+    if (leftChild(i) < size)
+    System.out.printf("Left Child:%7s%s\n", " ", planets[leftChild(i)]);
+    if (rightChild(i) < size)
+    System.out.printf("Right child:%6s%s\n", " ", planets[rightChild(i)]);
+    }
+    }
+
+    public boolean isLeaf(int pos) {
+        // Try with size >= 2
+        if (pos > (size / 2) && pos <= size) {
+            return true;
         }
+        return false;
+    }
+
+    public void heapify() {
+        for (int i = size / 2 - 1; i >= 0; i--) {
+            heapifyDown(i);
+        }
+    }
+
+    public void heapSort() {
+        heapify();
+    
+        for (int i = size - 1; i > 0; i--) {
+            swap(0, i);
+            size--;
+            heapifyDown(0);
+        }
+    }
+    
+    public void heapifyDown(int pos) {
+        if (isLeaf(pos)) {
+            return;
+        }
+        
+        int left = leftChild(pos);
+        int right = rightChild(pos);
+        int largest = pos;
+    
+        if (left < size && planets[left].compareTo(planets[largest]) > 0) {
+            largest = left;
+        }
+    
+        if (right < size && planets[right].compareTo(planets[largest]) > 0) {
+            largest = right;
+        }
+    
+        if (largest != pos) {
+            swap(pos, largest);
+            heapifyDown(largest);
+        }
+    }
+
+    public Planet[] getSortedArray() {
+        Planet[] sortedPlanets = new Planet[planets.length];
+        int index = 0;
+        while (size > 0) {
+            sortedPlanets[index++] = remove();
+        }
+        return sortedPlanets;
+    }
+
+    public Planet remove(){
+        if (size == 0) {
+            return null;
+        }
+
+        Planet removedPlanet = planets[0];
+        planets[0] = planets[--size];
+        heapifyDown(0);
+        return removedPlanet;
     }
 }
 
